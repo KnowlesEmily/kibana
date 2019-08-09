@@ -33,6 +33,7 @@ interface Props extends ReactIntl.InjectedIntlProps {
 class ExitFullScreenButtonUi extends PureComponent<Props> {
   public onKeyDown = (e: KeyboardEvent) => {
     if (e.keyCode === keyCodes.ESCAPE) {
+      // console.log(this.props)
       this.props.onExitFullScreenMode();
     }
   };
@@ -65,7 +66,7 @@ class ExitFullScreenButtonUi extends PureComponent<Props> {
             type="hollow"
             aria-label={intl.formatMessage({
               id: 'common.ui.exitFullScreenButton.exitFullScreenModeButtonAreaLabel',
-              defaultMessage: 'Exit full screen mode',
+              defaultMessage: 'Exit Full Screen Mode',
             })}
             className="dshExitFullScreenButton__mode"
             onClick={this.props.onExitFullScreenMode}
@@ -77,7 +78,7 @@ class ExitFullScreenButtonUi extends PureComponent<Props> {
             <span className="dshExitFullScreenButton__text" data-test-subj="exitFullScreenModeText">
               <FormattedMessage
                 id="common.ui.exitFullScreenButton.exitFullScreenModeButtonLabel"
-                defaultMessage="Exit full screen"
+                defaultMessage="Exit Full Screen"
               />
               <span className="kuiIcon fa fa-angle-left" />
             </span>

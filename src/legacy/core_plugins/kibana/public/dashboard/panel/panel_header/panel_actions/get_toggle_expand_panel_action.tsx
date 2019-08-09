@@ -45,10 +45,10 @@ export function getToggleExpandPanelAction({
       getDisplayName: () => {
         return isExpanded
           ? i18n.translate('kbn.dashboard.panel.toggleExpandPanel.expandedDisplayName', {
-              defaultMessage: 'Minimize',
+              defaultMessage: 'Exit Full Screen',
             })
           : i18n.translate('kbn.dashboard.panel.toggleExpandPanel.notExpandedDisplayName', {
-              defaultMessage: 'Full screen',
+              defaultMessage: 'Full Screen',
             });
       },
       // TODO: Update to minimize icon when https://github.com/elastic/eui/issues/837 is complete.

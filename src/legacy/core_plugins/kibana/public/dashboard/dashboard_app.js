@@ -18,47 +18,111 @@
  */
 
 import _ from 'lodash';
-import { i18n } from '@kbn/i18n';
+import {
+  i18n
+} from '@kbn/i18n';
 import React from 'react';
 import angular from 'angular';
-import { uiModules } from 'ui/modules';
+import {
+  uiModules
+} from 'ui/modules';
 import chrome from 'ui/chrome';
-import { wrapInI18nContext } from 'ui/i18n';
-import { toastNotifications } from 'ui/notify';
+import {
+  wrapInI18nContext
+} from 'ui/i18n';
+import {
+  toastNotifications
+} from 'ui/notify';
 
 import 'ui/apply_filters';
 
-import { panelActionsStore } from './store/panel_actions_store';
+import {
+  panelActionsStore
+} from './store/panel_actions_store';
 
-import { getDashboardTitle } from './dashboard_strings';
-import { DashboardViewMode } from './dashboard_view_mode';
-import { TopNavIds } from './top_nav/top_nav_ids';
-import { ConfirmationButtonTypes } from 'ui/modals/confirm_modal';
-import { FilterBarQueryFilterProvider } from 'ui/filter_bar/query_filter';
-import { DocTitleProvider } from 'ui/doc_title';
-import { getTopNavConfig } from './top_nav/get_top_nav_config';
-import { DashboardConstants, createDashboardEditUrl } from './dashboard_constants';
-import { DashboardStateManager } from './dashboard_state_manager';
-import { saveDashboard } from './lib';
-import { showCloneModal } from './top_nav/show_clone_modal';
-import { showSaveModal } from 'ui/saved_objects/show_saved_object_save_modal';
-import { DashboardSaveModal } from './top_nav/save_modal';
-import { showAddPanel } from './top_nav/show_add_panel';
-import { showOptionsPopover } from './top_nav/show_options_popover';
-import { showNewVisModal } from '../visualize/wizard';
-import { showShareContextMenu, ShareContextMenuExtensionsRegistryProvider } from 'ui/share';
-import { migrateLegacyQuery } from 'ui/utils/migrate_legacy_query';
+import {
+  getDashboardTitle
+} from './dashboard_strings';
+import {
+  DashboardViewMode
+} from './dashboard_view_mode';
+import {
+  TopNavIds
+} from './top_nav/top_nav_ids';
+import {
+  ConfirmationButtonTypes
+} from 'ui/modals/confirm_modal';
+import {
+  FilterBarQueryFilterProvider
+} from 'ui/filter_bar/query_filter';
+import {
+  DocTitleProvider
+} from 'ui/doc_title';
+import {
+  getTopNavConfig
+} from './top_nav/get_top_nav_config';
+import {
+  DashboardConstants,
+  createDashboardEditUrl
+} from './dashboard_constants';
+import {
+  DashboardStateManager
+} from './dashboard_state_manager';
+import {
+  saveDashboard
+} from './lib';
+import {
+  showCloneModal
+} from './top_nav/show_clone_modal';
+import {
+  showSaveModal
+} from 'ui/saved_objects/show_saved_object_save_modal';
+import {
+  DashboardSaveModal
+} from './top_nav/save_modal';
+import {
+  showAddPanel
+} from './top_nav/show_add_panel';
+import {
+  showOptionsPopover
+} from './top_nav/show_options_popover';
+import {
+  showNewVisModal
+} from '../visualize/wizard';
+import {
+  showShareContextMenu,
+  ShareContextMenuExtensionsRegistryProvider
+} from 'ui/share';
+import {
+  migrateLegacyQuery
+} from 'ui/utils/migrate_legacy_query';
 import * as filterActions from 'plugins/kibana/discover/doc_table/actions/filter';
-import { FilterManagerProvider } from 'ui/filter_manager';
-import { EmbeddableFactoriesRegistryProvider } from 'ui/embeddable/embeddable_factories_registry';
-import { ContextMenuActionsRegistryProvider } from 'ui/embeddable';
-import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { timefilter } from 'ui/timefilter';
-import { getUnhashableStatesProvider } from 'ui/state_management/state_hashing';
+import {
+  FilterManagerProvider
+} from 'ui/filter_manager';
+import {
+  EmbeddableFactoriesRegistryProvider
+} from 'ui/embeddable/embeddable_factories_registry';
+import {
+  ContextMenuActionsRegistryProvider
+} from 'ui/embeddable';
+import {
+  VisTypesRegistryProvider
+} from 'ui/registry/vis_types';
+import {
+  timefilter
+} from 'ui/timefilter';
+import {
+  getUnhashableStatesProvider
+} from 'ui/state_management/state_hashing';
 
-import { DashboardViewportProvider } from './viewport/dashboard_viewport_provider';
+import {
+  DashboardViewportProvider
+} from './viewport/dashboard_viewport_provider';
 
-import { data } from 'plugins/data';
+import {
+  data
+} from 'plugins/data';
 data.search.loadLegacyDirectives();
 
 const app = uiModules.get('app/dashboard', [
@@ -116,7 +180,12 @@ app.directive('dashboardApp', function ($injector) {
         savedDashboard: dash,
         AppState,
         hideWriteControls: dashboardConfig.getHideWriteControls(),
-        addFilter: ({ field, value, operator, index }) => {
+        addFilter: ({
+          field,
+          value,
+          operator,
+          index
+        }) => {
           filterActions.addFilter(field, value, operator, index, dashboardStateManager.getAppState(), filterManager);
         }
       });
@@ -150,8 +219,7 @@ app.directive('dashboardApp', function ($injector) {
         const panelIndexPatterns = dashboardStateManager.getPanelIndexPatterns();
         if (panelIndexPatterns && panelIndexPatterns.length > 0) {
           $scope.indexPatterns = panelIndexPatterns;
-        }
-        else {
+        } else {
           indexPatterns.getDefault().then((defaultIndexPattern) => {
             $scope.$evalAsync(() => {
               $scope.indexPatterns = [defaultIndexPattern];
@@ -202,20 +270,23 @@ app.directive('dashboardApp', function ($injector) {
 
       // Push breadcrumbs to new header navigation
       const updateBreadcrumbs = () => {
-        chrome.breadcrumbs.set([
-          {
+        chrome.breadcrumbs.set([{
             text: i18n.translate('kbn.dashboard.dashboardAppBreadcrumbsTitle', {
               defaultMessage: 'Dashboard',
             }),
             href: $scope.landingPageUrl()
           },
-          { text: $scope.getDashTitle() }
+          {
+            text: $scope.getDashTitle()
+          }
         ]);
       };
       updateBreadcrumbs();
       dashboardStateManager.registerChangeListener(updateBreadcrumbs);
 
-      $scope.newDashboard = () => { kbnUrl.change(DashboardConstants.CREATE_NEW_DASHBOARD_URL, {}); };
+      $scope.newDashboard = () => {
+        kbnUrl.change(DashboardConstants.CREATE_NEW_DASHBOARD_URL, {});
+      };
       $scope.saveState = () => dashboardStateManager.saveState();
       $scope.getShouldShowEditHelp = () => (
         !dashboardStateManager.getPanels().length &&
@@ -234,10 +305,13 @@ app.directive('dashboardApp', function ($injector) {
 
       $scope.expandPanel = (panelIndex) => {
         $scope.expandedPanel =
-            dashboardStateManager.getPanels().find((panel) => panel.panelIndex === panelIndex);
+          dashboardStateManager.getPanels().find((panel) => panel.panelIndex === panelIndex);
       };
 
-      $scope.updateQueryAndFetch = function ({ query, dateRange }) {
+      $scope.updateQueryAndFetch = function ({
+        query,
+        dateRange
+      }) {
         timefilter.setTime(dateRange);
 
         const oldQuery = $scope.model.query;
@@ -253,7 +327,10 @@ app.directive('dashboardApp', function ($injector) {
         $scope.refresh();
       };
 
-      $scope.onRefreshChange = function ({ isPaused, refreshInterval }) {
+      $scope.onRefreshChange = function ({
+        isPaused,
+        refreshInterval
+      }) {
         timefilter.setRefreshInterval({
           pause: isPaused,
           value: refreshInterval ? refreshInterval : $scope.model.refreshInterval.value
@@ -289,7 +366,9 @@ app.directive('dashboardApp', function ($injector) {
 
       $scope.$watch('model.query', (newQuery) => {
         const query = migrateLegacyQuery(newQuery);
-        $scope.updateQueryAndFetch({ query });
+        $scope.updateQueryAndFetch({
+          query
+        });
       });
 
       $scope.$listenAndDigestAsync(timefilter, 'fetch', () => {
@@ -335,22 +414,21 @@ app.directive('dashboardApp', function ($injector) {
         }
 
         confirmModal(
-          i18n.translate('kbn.dashboard.changeViewModeConfirmModal.discardChangesDescription',
-            { defaultMessage: `Once you discard your changes, there's no getting them back.` }
-          ),
-          {
+          i18n.translate('kbn.dashboard.changeViewModeConfirmModal.discardChangesDescription', {
+            defaultMessage: `Once you discard your changes, there's no getting them back.`
+          }), {
             onConfirm: revertChangesAndExitEditMode,
             onCancel: _.noop,
-            confirmButtonText: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.confirmButtonLabel',
-              { defaultMessage: 'Discard changes' }
-            ),
-            cancelButtonText: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.cancelButtonLabel',
-              { defaultMessage: 'Continue editing' }
-            ),
+            confirmButtonText: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.confirmButtonLabel', {
+              defaultMessage: 'Discard changes'
+            }),
+            cancelButtonText: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.cancelButtonLabel', {
+              defaultMessage: 'Continue editing'
+            }),
             defaultFocusedButton: ConfirmationButtonTypes.CANCEL,
-            title: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.discardChangesTitle',
-              { defaultMessage: 'Discard changes to dashboard?' }
-            )
+            title: i18n.translate('kbn.dashboard.changeViewModeConfirmModal.discardChangesTitle', {
+              defaultMessage: 'Discard changes to dashboard?'
+            })
           }
         );
       };
@@ -372,12 +450,12 @@ app.directive('dashboardApp', function ($injector) {
           .then(function (id) {
             if (id) {
               toastNotifications.addSuccess({
-                title: i18n.translate('kbn.dashboard.dashboardWasSavedSuccessMessage',
-                  {
-                    defaultMessage: `Dashboard '{dashTitle}' was saved`,
-                    values: { dashTitle: dash.title },
+                title: i18n.translate('kbn.dashboard.dashboardWasSavedSuccessMessage', {
+                  defaultMessage: `Dashboard '{dashTitle}' was saved`,
+                  values: {
+                    dashTitle: dash.title
                   },
-                ),
+                }, ),
                 'data-test-subj': 'saveDashboardSuccess',
               });
 
@@ -388,21 +466,23 @@ app.directive('dashboardApp', function ($injector) {
                 updateViewMode(DashboardViewMode.VIEW);
               }
             }
-            return { id };
+            return {
+              id
+            };
           }).catch((error) => {
             toastNotifications.addDanger({
-              title: i18n.translate('kbn.dashboard.dashboardWasNotSavedDangerMessage',
-                {
-                  defaultMessage: `Dashboard '{dashTitle}' was not saved. Error: {errorMessage}`,
-                  values: {
-                    dashTitle: dash.title,
-                    errorMessage: error.message,
-                  },
+              title: i18n.translate('kbn.dashboard.dashboardWasNotSavedDangerMessage', {
+                defaultMessage: `Dashboard '{dashTitle}' was not saved. Error: {errorMessage}`,
+                values: {
+                  dashTitle: dash.title,
+                  errorMessage: error.message,
                 },
-              ),
+              }, ),
               'data-test-subj': 'saveDashboardFailure',
             });
-            return { error };
+            return {
+              error
+            };
           });
       }
 
@@ -419,13 +499,26 @@ app.directive('dashboardApp', function ($injector) {
       const navActions = {};
       navActions[TopNavIds.FULL_SCREEN] = () =>
         dashboardStateManager.setFullScreenMode(true);
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      navActions[TopNavIds.SLIDESHOW] = () =>
+        dashboardStateManager.setSlideshowMode(true);
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       navActions[TopNavIds.EXIT_EDIT_MODE] = () => onChangeViewMode(DashboardViewMode.VIEW);
       navActions[TopNavIds.ENTER_EDIT_MODE] = () => onChangeViewMode(DashboardViewMode.EDIT);
       navActions[TopNavIds.SAVE] = () => {
         const currentTitle = dashboardStateManager.getTitle();
         const currentDescription = dashboardStateManager.getDescription();
         const currentTimeRestore = dashboardStateManager.getTimeRestore();
-        const onSave = ({ newTitle, newDescription, newCopyOnSave, newTimeRestore, isTitleDuplicateConfirmed, onTitleDuplicate }) => {
+        const onSave = ({
+          newTitle,
+          newDescription,
+          newCopyOnSave,
+          newTimeRestore,
+          isTitleDuplicateConfirmed,
+          onTitleDuplicate
+        }) => {
           dashboardStateManager.setTitle(newTitle);
           dashboardStateManager.setDescription(newDescription);
           dashboardStateManager.savedDashboard.copyOnSave = newCopyOnSave;
@@ -435,25 +528,42 @@ app.directive('dashboardApp', function ($injector) {
             isTitleDuplicateConfirmed,
             onTitleDuplicate,
           };
-          return save(saveOptions).then(({ id, error }) => {
+          return save(saveOptions).then(({
+            id,
+            error
+          }) => {
             // If the save wasn't successful, put the original values back.
             if (!id || error) {
               dashboardStateManager.setTitle(currentTitle);
               dashboardStateManager.setDescription(currentDescription);
               dashboardStateManager.setTimeRestore(currentTimeRestore);
             }
-            return { id, error };
+            return {
+              id,
+              error
+            };
           });
         };
 
-        const dashboardSaveModal = (
-          <DashboardSaveModal
-            onSave={onSave}
-            onClose={() => {}}
-            title={currentTitle}
-            description={currentDescription}
-            timeRestore={currentTimeRestore}
-            showCopyOnSave={dash.id ? true : false}
+        const dashboardSaveModal = ( <
+          DashboardSaveModal onSave = {
+            onSave
+          }
+          onClose = {
+            () => {}
+          }
+          title = {
+            currentTitle
+          }
+          description = {
+            currentDescription
+          }
+          timeRestore = {
+            currentTimeRestore
+          }
+          showCopyOnSave = {
+            dash.id ? true : false
+          }
           />
         );
         showSaveModal(dashboardSaveModal);
@@ -468,12 +578,18 @@ app.directive('dashboardApp', function ($injector) {
             isTitleDuplicateConfirmed,
             onTitleDuplicate,
           };
-          return save(saveOptions).then(({ id, error }) => {
+          return save(saveOptions).then(({
+            id,
+            error
+          }) => {
             // If the save wasn't successful, put the original title back.
             if (!id || error) {
               dashboardStateManager.setTitle(currentTitle);
             }
-            return { id, error };
+            return {
+              id,
+              error
+            };
           });
         };
 
@@ -481,7 +597,9 @@ app.directive('dashboardApp', function ($injector) {
       };
       navActions[TopNavIds.ADD] = () => {
         const addNewVis = () => {
-          showNewVisModal(visTypes, { editorParams: [DashboardConstants.ADD_VISUALIZATION_TO_DASHBOARD_MODE_PARAM] });
+          showNewVisModal(visTypes, {
+            editorParams: [DashboardConstants.ADD_VISUALIZATION_TO_DASHBOARD_MODE_PARAM]
+          });
         };
 
         showAddPanel(dashboardStateManager.addNewPanel, addNewVis, embeddableFactories);

@@ -17,13 +17,23 @@
  * under the License.
  */
 
-import { i18n } from '@kbn/i18n';
+import {
+  i18n
+} from '@kbn/i18n';
 import _ from 'lodash';
 
-import { DashboardViewMode } from './dashboard_view_mode';
-import { FilterUtils } from './lib/filter_utils';
-import { PanelUtils } from './panel/panel_utils';
-import { store } from '../store';
+import {
+  DashboardViewMode
+} from './dashboard_view_mode';
+import {
+  FilterUtils
+} from './lib/filter_utils';
+import {
+  PanelUtils
+} from './panel/panel_utils';
+import {
+  store
+} from '../store';
 import {
   updateViewMode,
   setPanels,
@@ -41,9 +51,16 @@ import {
   closeContextMenu,
   requestReload,
 } from './actions';
-import { stateMonitorFactory } from 'ui/state_management/state_monitor_factory';
-import { createPanelState } from './panel';
-import { getAppStateDefaults, migrateAppState } from './lib';
+import {
+  stateMonitorFactory
+} from 'ui/state_management/state_monitor_factory';
+import {
+  createPanelState
+} from './panel';
+import {
+  getAppStateDefaults,
+  migrateAppState
+} from './lib';
 import {
   getViewMode,
   getFullScreenMode,
@@ -59,6 +76,18 @@ import {
   getQuery,
   getFilters,
 } from '../selectors';
+import {
+  div
+} from 'gl-matrix/src/gl-matrix/vec3';
+import {
+  data
+} from 'vega-lite';
+import {
+  createElementAccess
+} from 'typescript';
+import {
+  array
+} from 'vega-util';
 
 /**
  * Dashboard state manager handles connecting angular and redux state between the angular and react portions of the
@@ -74,7 +103,12 @@ export class DashboardStateManager {
    * @param {boolean} hideWriteControls true if write controls should be hidden.
    * @param {function} addFilter a function that can be used to add a filter bar filter
    */
-  constructor({ savedDashboard, AppState, hideWriteControls, addFilter }) {
+  constructor({
+    savedDashboard,
+    AppState,
+    hideWriteControls,
+    addFilter
+  }) {
     this.savedDashboard = savedDashboard;
     this.hideWriteControls = hideWriteControls;
     this.addFilter = addFilter;
@@ -152,7 +186,10 @@ export class DashboardStateManager {
     }));
   }
 
-  handleRefreshConfigChange({ pause, value }) {
+  handleRefreshConfigChange({
+    pause,
+    value
+  }) {
     store.dispatch(updateRefreshConfig({
       isPaused: pause,
       interval: value,
@@ -221,9 +258,9 @@ export class DashboardStateManager {
     const state = store.getState();
     const dashboardFilters = this.getDashboardFilterBars();
     if (!_.isEqual(
-      FilterUtils.cleanFiltersForComparison(dashboardFilters),
-      FilterUtils.cleanFiltersForComparison(getFilters(state))
-    )) {
+        FilterUtils.cleanFiltersForComparison(dashboardFilters),
+        FilterUtils.cleanFiltersForComparison(getFilters(state))
+      )) {
       store.dispatch(updateFilters(dashboardFilters));
     }
   }
@@ -268,11 +305,14 @@ export class DashboardStateManager {
       this.setFullScreenMode(fullScreen);
     }
 
-    this.changeListeners.forEach(listener => listener({ dirty }));
+    this.changeListeners.forEach(listener => listener({
+      dirty
+    }));
     this.saveState();
   }
 
   getFullScreenMode() {
+    // console.log(this.appState.fullScreenMode);
     return this.appState.fullScreenMode;
   }
 
@@ -280,6 +320,64 @@ export class DashboardStateManager {
     this.appState.fullScreenMode = fullScreenMode;
     this.saveState();
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  getSlideshowMode() {
+    return this.appState.slideshowMode;
+  }
+
+  setSlideshowMode(slideshowMode) {
+    var time = 2000;
+    var elemIndex = 0;
+    let elems = document.getElementsByClassName("react-grid-item react-draggable react-resizable");
+    let elements = Array.from(elems);
+    this.appState.fullScreenMode = true;
+    this.saveState();
+
+    const startSlideshow = () => {
+      console.dir(elements[elemIndex])
+      if (elemIndex === 0) {
+        elements[elements.length - 1].classList.add("dshDashboardGrid__item--hidden")
+      } else if (elemIndex === 3) {
+        elements[elemIndex - 1].classList.add("dshDashboardGrid__item--expanded")
+      } else {
+        elements[elemIndex - 1].classList.add("dshDashboardGrid__item--hidden")
+      }
+      if (elemIndex < elements.length) {
+        elements[elemIndex].classList.remove("dshDashboardGrid__item--hidden")
+        elemIndex++;
+      } else {
+        elemIndex = 0;
+      }
+    }
+    for (elemIndex; elemIndex < elements.length; elemIndex++) {
+      elements[elemIndex].classList.add("dshDashboardGrid__item--hidden")
+    }
+    setInterval(startSlideshow, time)
+
+    //   if (elemIndex === 0) {
+    //     elements[elements.length - 1].classList.add("dshDashboardGrid__item--hidden")
+    //   } else {
+    //     elements[elemIndex - 1].classList.add("dshDashboardGrid__item--hidden")
+    //   }
+    //   if (elemIndex < elements.length) {
+    //     elements[elemIndex].classList.remove("dshDashboardGrid__item--hidden")
+    //     elements[elemIndex].classList.add("dshDashboardGrid__item--expanded")
+    //     elemIndex++;
+    //   } else {
+    //     elemIndex = 0;
+    //   }
+
+    // }
+    // for (elemIndex; elemIndex < elements.length; elemIndex++) {
+    //   elements[elemIndex].classList.add("dshDashboardGrid__item--hidden")
+    // }
+    // setInterval(startSlideshow, time)
+
+    this.appState.slideshowMode = slideshowMode;
+    this.saveState();
+  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getPanelIndexPatterns() {
     const indexPatterns = _.flatten(Object.values(this.panelIndexPatternMapping));
@@ -413,9 +511,9 @@ export class DashboardStateManager {
     const lastSavedQuery = this.getLastSavedQuery();
 
     const isLegacyStringQuery = (
-      _.isString(lastSavedQuery)
-      && _.isPlainObject(currentQuery)
-      && _.has(currentQuery, 'query')
+      _.isString(lastSavedQuery) &&
+      _.isPlainObject(currentQuery) &&
+      _.has(currentQuery, 'query')
     );
     if (isLegacyStringQuery) {
       return lastSavedQuery !== currentQuery.query;
